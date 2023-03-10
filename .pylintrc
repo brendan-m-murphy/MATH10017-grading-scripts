@@ -1,0 +1,5 @@
+[BASIC]
+good-names-rgxs=^[_a-z][_a-z0-9]?$
+
+[MASTER]
+init-hook='import sys; sys.path.append(".")'
