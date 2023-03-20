@@ -46,6 +46,7 @@ def main():
     parser.add_argument("in_dir", type=str,
                         help="(relative path to) file containing Blackboard assignment download")
     parser.add_argument("-o", "--out_dir", type=str, help="output directory")
+    parser.add_argument("-c", "--compiler", type=str, help="compiler (gcc or clang)")
     args = parser.parse_args()
 
     in_path = Path.cwd() / args.in_dir
@@ -54,6 +55,12 @@ def main():
     else:
         out_path = Path.cwd() / args.out_dir
         os.makedirs(out_path, exist_ok=True)
+
+
+    if args.compiler is None:
+        compiler = "gcc"
+    else:
+        compiler = args.compiler
 
     gb = GradeBook(in_path, out_path)
     gb.get_files_by_id()
@@ -66,7 +73,7 @@ def main():
                       ]
 
     gb.write_feedback(feedback_steps, compiler=Compiler(
-        ['-Wall'], compiler_type='clang'))
+        ['-Wall'], compiler_type=compiler))
 
 
 if __name__ == "__main__":
