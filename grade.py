@@ -12,7 +12,7 @@ The script creates
   - the student's code
   - the compiler's output for that code
   - any output produced by the code
-2. A directory named for the student's ID (e.g. ab12345) containing all of the files they submitted.
+2. A directory named for the student's ID (e.g. ab12345) containing all the files they submitted.
 
 Arguments:
 - in_dir: the directory you wish to process

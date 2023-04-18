@@ -6,12 +6,14 @@ method in the CodeFile class.
 from pathlib import Path
 import subprocess
 
-class Compiler():
+
+class Compiler:
     """
     Compiler: compile C or C++ code using gcc or clang.
 
     Used as a hook for CodeFile.compile.
     """
+
     def __init__(self, *args,
                  compiler_type='gnu',
                  suppress_main_return_warn=True,
@@ -78,9 +80,9 @@ class Compiler():
         commands = [compiler_str, str(in_file), "-o", str(out_file)] + self.flags
 
         try:
-            sp = subprocess.run(commands, capture_output=True, text=True, check=True) #, encoding='iso-8859-1')
+            sp = subprocess.run(commands, capture_output=True, text=True, check=True)  # , encoding='iso-8859-1')
         except subprocess.CalledProcessError as e:
-            #print(f"Process {e.cmd} exited with code {e.returncode}: {e.stderr}")
+            # print(f"Process {e.cmd} exited with code {e.returncode}: {e.stderr}")
             return e.returncode, e.stderr
         except UnicodeDecodeError as e:
             print(f"Unicode decode error in {in_file}: {e}")
@@ -89,19 +91,20 @@ class Compiler():
             return sp.returncode, sp.stderr
 
 
-class Executor():
+class Executor:
     """
     Executor: run code and return output.
 
     Used as hook for CodeFile.get_output_as_string.
     """
+
     def __init__(self) -> None:
         pass
 
     def __call__(self, file_path, timeout=5) -> str:
         try:
             sp = subprocess.run([str(file_path)], capture_output=True,
-                                text=True,# encoding='iso-8859-1',
+                                text=True,  # encoding='iso-8859-1',
                                 timeout=timeout, check=True)
         except subprocess.TimeoutExpired:
             return f"Timed out: execution took more than {timeout} seconds."
@@ -112,13 +115,13 @@ class Executor():
             return sp.stdout
 
 
-class ErrorParser():
+class ErrorParser:
     """
     ErrorParser: parses stderr created by compiler.
     """
 
 
-class OutputParser():
+class OutputParser:
     """
     OutputParser: parses file output
     """

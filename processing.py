@@ -11,6 +11,7 @@ import zipfile
 
 from code_checking import Compiler, Executor
 
+
 def get_id(file):
     """
     get_id Try to extract student ID from Blackboard
@@ -23,11 +24,12 @@ def get_id(file):
         str: Student ID or "noid" if none found.
     """
     id_pat = re.compile(r'[a-z]{2}[0-9]{5}')
-    match =  id_pat.search(file.stem)
+    match = id_pat.search(file.stem)
     if match:
         return match.group(0)
     else:
         return "noid"
+
 
 def remove_filename_whitespace(dir_path):
     """
@@ -42,7 +44,8 @@ def remove_filename_whitespace(dir_path):
         t = pat.sub('_', s)
         os.rename(file, file.parent / t)
 
-class GradeBook():
+
+class GradeBook:
     """
     Generate and hold a list of Student objects.
 
@@ -88,7 +91,10 @@ class GradeBook():
             print(f'Writing file {write_name}')
             with open(self.out_dir / write_name, "w", encoding='utf-8') as f:
                 f.write(f"*** homework for {student.first} {student.last} ({student.student_id}) ***\n\n")
-                f.write("\nThis report contains all C code you submitted, warnings and errors from the compiler (if any), program output (if your code compiled), followed by feedback.\n\n")
+                f.write("""\nThis report contains all C code you submitted, \
+                warnings and errors from the compiler (if any), \
+                program output (if your code compiled), \
+                followed by feedback.\n\n""")
 
                 for suffix in self.file_types:
                     for file in student.dir.glob("*" + suffix):
@@ -116,6 +122,7 @@ def get_name(file):
     else:
         return "", ""
 
+
 def make_dir_name(path, student_id):
     """
     make_dir_name make a directory path for Student folder
@@ -129,6 +136,7 @@ def make_dir_name(path, student_id):
     """
     return path / student_id
 
+
 def get_suffix(file_string):
     """get the suffix from a string of the form filename.suffix"""
     pattern = re.compile(r"\.[A-Za-z]*$")
@@ -136,6 +144,7 @@ def get_suffix(file_string):
     if match:
         return match.group(0)
     return None
+
 
 def move_to_top(dir_, file_types):
     """
@@ -194,7 +203,8 @@ def extract_file(file, extract_to=None):
             print(f"Process {e.cmd} exited with code {e.returncode}: {e.stderr}")
             print(f"Couldn't extract file {str(file)}.")
 
-class Student():
+
+class Student:
     """
     Student: Stores student data.
     """
@@ -215,8 +225,6 @@ class Student():
             self.file_list.append(file_path)
         else:
             self.file_list = [file_path]
-
-
 
     def make_folder(self, output_path, file_types=None):
         """Make a folder containing the files belonging to a student.
@@ -252,11 +260,10 @@ class Student():
                         Compressed file copied to student directory.")
                     shutil.copy(str(file), str(self.dir))
 
-        move_to_top(self.dir, file_types) # move to top, in case extracted files nested
+        move_to_top(self.dir, file_types)  # move to top, in case extracted files nested
 
 
-
-class CodeFile():
+class CodeFile:
     """
     CodeFile Stores path to code, allows compilation,
     and stores path of executable, as well as error messages.
@@ -280,7 +287,7 @@ class CodeFile():
 
     def compile(self, compiler):
         """
-        compile Compile the code at self.file_path and
+        compile: Compile the code at self.file_path and
         capture exit_code and stderr (if applicable).
 
         Args:
@@ -292,14 +299,13 @@ class CodeFile():
             self.output_file = self.file_path.parent / (self.file_path.stem + ".out")
         self.exit_code, self.stderr = compiler(self.file_path, self.output_file)
 
-
-    def get_output_as_string(self, exectutor=Executor()):
+    def get_output_as_string(self, executor=Executor()):
         """
         get_output_as_string Run code and return output
         as a string.
 
         Args:
-            exectutor (Executor object): Executor object
+            executor (Executor object): Executor object
             to run the code. Defaults to Executor with
             default options.
 
@@ -307,7 +313,7 @@ class CodeFile():
         if self.output_text:
             return self.output_text
         elif self.exit_code == 0:
-            self.output_text = exectutor(self.output_file)
+            self.output_text = executor(self.output_file)
             return self.output_text
         else:
             return "Code did not compile."
