@@ -1,6 +1,7 @@
 # Brendan's additions
 *.ini
 *.out
+*.idea
 ## output of grade.py applied to test_raw
 test_proc/
 
