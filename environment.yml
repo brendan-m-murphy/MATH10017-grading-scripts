@@ -1,0 +1,6 @@
+name: grading
+channels:
+  - defaults
+dependencies:
+  - python
+  - aiosmtpd
