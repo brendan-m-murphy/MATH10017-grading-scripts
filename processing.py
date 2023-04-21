@@ -82,10 +82,17 @@ class GradeBook:
                 self.student_dict[file_id].add_file(file)
 
     def make_folders(self):
+        """
+        make_folders create directory for each student in the gradebook
+        """
         for student in self.student_dict.values():
             student.make_folder(self.out_dir, file_types=self.file_types)
 
     def write_feedback(self, feedback_steps, compiler=Compiler()):
+        """
+        write_feedback create .txt file with feedback for each student
+        in the gradebook.
+        """
         for student in self.student_dict.values():
             write_name = student.first + student.last + student.student_id + ".txt"
             print(f'Writing file {write_name}')
@@ -260,7 +267,7 @@ class Student:
                         Compressed file copied to student directory.")
                     shutil.copy(str(file), str(self.dir))
 
-        move_to_top(self.dir, file_types)  # move to top, in case extracted files nested
+        move_to_top(self.dir, file_types)  # move source files to top of student dir
 
 
 class CodeFile:

@@ -23,7 +23,7 @@ def make_header(header_text, size=None):
         line = "\n" + ((len(str(header_text)) + 2) * "=") + "\n"
     return "\n" + line + str(header_text) + line + "\n"
 
-class FeedBackStep():
+class FeedBackStep:
     """
     FeedBackStep: base class for writing different
     types of feedback to student feedback files.
@@ -81,22 +81,29 @@ class SourceCode(FeedBackStep):
             except UnicodeDecodeError as e:
                 print(f"Can't read {str(file)}: {e}")
 
-def shorten_file_paths(s):
-    pat = re.compile(r'/\w+/\w+/Dropbox/teaching/cpp-R-2022/marking/\w+/\w+/\w+/[\w-]+_')
-    return re.sub(pat, "", s)
 
 class CompilerOutput(FeedBackStep):
     """
     CompilerOutput: FeedBackStep to write compiler messages.
 
     """
-    def __init__(self, header_text="GCC output", error_parser=None, shorten_file_paths=False) -> None:
+    def __init__(self,
+                 header_text="GCC output",
+                 error_parser=None,
+                 shorten_file_paths=False) -> None:
         super().__init__(header_text)
         self.shorten_file_paths = shorten_file_paths
         if error_parser:
             self.error_parser = error_parser
         else:
             self.error_parser = lambda x: x
+
+    def shorten_file_paths_(self, s):
+        """
+        shorten_file_paths_ remove long filepaths from stderr
+        """
+        pat = re.compile(r'/\w+/\w+/Dropbox/teaching/cpp-R-2022/marking/\w+/\w+/\w+/[\w-]+_')
+        return re.sub(pat, "", s)
 
     def __call__(self, writer, code_file) -> None:
         """
@@ -111,8 +118,8 @@ class CompilerOutput(FeedBackStep):
         """
         super().__call__(writer, code_file)
         try:
-            if shorten_file_paths:
-                writer.write(self.error_parser(shorten_file_paths(code_file.stderr)))
+            if self.shorten_file_paths:
+                writer.write(self.error_parser(self.shorten_file_paths_(code_file.stderr)))
             else:
                 writer.write(self.error_parser(code_file.stderr))
         except UnicodeDecodeError as e:
@@ -173,11 +180,13 @@ class KNNFeedbackSection(FeedBackStep):
         if code_file.exit_code == 0:
             not1_count = code_file.get_output_as_string().lower().count("not 1")
             if not1_count == 83:
-                writer.write("Your code predicts that 17 of the images are the number one, which is the correct output for 5-NN on this data.")
+                writer.write("Your code predicts that 17 of the images are the number one, \
+                             which is the correct output for 5-NN on this data.")
             elif not1_count == 0:
                 writer.write("Your code doesn't make any predictions.")
             else:
-                writer.write(f"Your code predicts that {100 - not1_count} of the images are the number one, which is incorrect. On this data, 5-NN should predict that 17 images are the number one.")
+                writer.write(f"Your code predicts that {100 - not1_count} of the images are the number one, \
+                             which is incorrect. On this data, 5-NN should predict that 17 images are the number one.")
             writer.write("\n")
 
 

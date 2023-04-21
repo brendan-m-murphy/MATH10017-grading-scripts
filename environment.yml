@@ -5,3 +5,4 @@ dependencies:
   - python
   - aiosmtpd
   - r-essentials
+  - pylint
